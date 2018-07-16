@@ -20,7 +20,8 @@ cx_Freeze.setup(
             "packages": [
                 "pygame",
                 "sqlite3",
-                "random"
+                "random",
+                "logging"
             ],
             "includes": [
                 "Block",
@@ -36,6 +37,6 @@ cx_Freeze.setup(
         }
     },
     executables = [
-        cx_Freeze.Executable("new.py", base = base)
+        cx_Freeze.Executable("main.py", base = base)
     ]
 )

@@ -7,6 +7,7 @@ from Block import Block
 from Button import Button
 
 pygame.init()
+
 snake_icon = pygame.image.load("assets/images/snake_icon.png")
 pygame.display.set_icon(snake_icon);
 
@@ -192,6 +193,7 @@ def gameLoop():
 
         for event in pygame.event.get():
             handleGameOptions(event)
+            handleBtnEvents((audioBtn,), event)
             if event.type == pygame.QUIT:
                 gameExit = True
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
@@ -243,6 +245,7 @@ def gameLoop():
         updateScore(str(score))
         drawList(apples)
         snake(snakeList, maxLength, direction)
+        handleAudio()
 
         if not startMenu and not scoreMenu and not gameOver:
             pygame.display.update()
@@ -281,12 +284,12 @@ def pauseLoop():
         gameLoop()
 
     continueBtn = Button(125,
-                          display_height -50,
-                          text="CONTINUE",
-                          colour=game_colour,
-                          active_colour=game_colour_light,
-                          font=exedore,
-                          active_event=continue_game)
+                         display_height -50,
+                         text="CONTINUE",
+                         colour=game_colour,
+                         active_colour=game_colour_light,
+                         font=exedore,
+                         active_event=continue_game)
 
     mainMenuBtn = Button(continueBtn.get_width() + continueBtn.get_xPos() + 50,
                          display_height -50,
@@ -470,5 +473,6 @@ def quit_event():
     conn.close()
     pygame.quit()
     quit()
+
 
 gameLoop()
