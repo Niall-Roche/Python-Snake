@@ -1,5 +1,0 @@
-#!/Users/niallroche/Projects/pythonProjects/pygame/game1/env/bin/python3
-from cx_Freeze.setupwriter import main
-
-main()
-
