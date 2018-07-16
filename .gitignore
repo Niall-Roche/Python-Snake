@@ -1,0 +1,7 @@
+# ignore all logs
+*.log
+
+# ignore all DB files
+*.db
+
+build
