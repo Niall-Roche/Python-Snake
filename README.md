@@ -31,7 +31,10 @@ env/bin/pip install pygame
 ```
 
 <h3>Run Game</h3>
+```
 env/bin/python main.py
+```
+
 
 <img src="https://image.ibb.co/kZL29J/title_screen.png" alt="title_screen" border="3" width="700" height="500">
 <img src="https://image.ibb.co/gkzvUJ/game_in_play.png" alt="game_in_play" border="3" width="700" height="500">
