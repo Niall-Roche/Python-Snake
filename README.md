@@ -30,12 +30,10 @@ Install Pygame
 env/bin/pip install pygame
 ```
 
-<h3>Run Game</h3>
-```
-env/bin/python main.py
-```
+### Run Game
+`env/bin/python main.py`
 
-
+<h3>Screenshots</h3>
 <img src="https://image.ibb.co/kZL29J/title_screen.png" alt="title_screen" border="3" width="700" height="500">
 <img src="https://image.ibb.co/gkzvUJ/game_in_play.png" alt="game_in_play" border="3" width="700" height="500">
 <img src="https://image.ibb.co/fkZ7by/game_over.png" alt="game_over" border="3" width="700" height="500">
