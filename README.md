@@ -10,9 +10,9 @@
 Simple snake game written in python using the pygame library.
 </p>
 
+<img src="https://image.ibb.co/kZL29J/title_screen.png" alt="title_screen" border="3" width="700" height="500">
 <img src="https://image.ibb.co/gkzvUJ/game_in_play.png" alt="game_in_play" border="3" width="700" height="500">
 <img src="https://image.ibb.co/fkZ7by/game_over.png" alt="game_over" border="3" width="700" height="500">
-<img src="https://image.ibb.co/kZL29J/title_screen.png" alt="title_screen" border="3" width="700" height="500">
 
 <h3>Features</h3>
 <ul>
