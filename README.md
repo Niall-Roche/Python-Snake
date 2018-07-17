@@ -10,6 +10,29 @@
 Simple snake game written in python using the pygame library.
 </p>
 
+<br>
+
+<h3>Dependencies</h3>
+<i>Below is recommended setup</i>
+
+Insure python 3.7 is installed: https://www.python.org/
+```
+brew install python
+```
+
+Inside the game directory set up a python virtual environment
+```
+python -m venv <current_path>/env
+```
+
+Install Pygame
+```
+env/bin/pip install pygame
+```
+
+<h3>Run Game</h3>
+env/bin/python main.py
+
 <img src="https://image.ibb.co/kZL29J/title_screen.png" alt="title_screen" border="3" width="700" height="500">
 <img src="https://image.ibb.co/gkzvUJ/game_in_play.png" alt="game_in_play" border="3" width="700" height="500">
 <img src="https://image.ibb.co/fkZ7by/game_over.png" alt="game_over" border="3" width="700" height="500">
