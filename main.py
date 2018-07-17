@@ -38,7 +38,8 @@ game_green_light = (131, 242, 118)
 game_blue = (27, 106, 232)
 game_blue_light = (96, 181, 242)
 
-defaultFont = pygame.font.SysFont(None, 25)
+# defaultFont = pygame.font.SysFont(None, 25)
+defaultFont = pygame.font.Font("assets/fonts/GeosansLight.ttf", 20)
 yahooFont = pygame.font.Font("assets/fonts/Yahoo.ttf", 25)
 exedore = pygame.font.Font("assets/fonts/exedore.ttf", 25)
 exedorel = pygame.font.Font("assets/fonts/exedorel.ttf", 45)
@@ -186,10 +187,8 @@ def gameLoop():
         if paused:
             pauseLoop()
 
-        box = InputBox(display_width/2 -20, display_height/2 + 30, 140, 32)
-
         if gameOver:
-            gameOverLoop(box, score)
+            gameOverLoop(score)
 
         for event in pygame.event.get():
             handleGameOptions(event)
@@ -327,7 +326,7 @@ def pauseLoop():
                 continue_game()
 
 
-def gameOverLoop(box, score):
+def gameOverLoop(score):
 
     def play_again():
         pygame.mixer.music.stop()
@@ -338,6 +337,8 @@ def gameOverLoop(box, score):
         global startMenu
         startMenu = True
         gameLoop()
+
+    box = InputBox(display_width/2 -20, display_height/2 + 30, 140, 32)
 
     playAgainBtn = Button(100,
                           display_height -50,
@@ -388,7 +389,8 @@ def gameOverLoop(box, score):
                 if event.type == pygame.QUIT:
                     quit_event()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    save_player(box.get_text().strip(), str(score))
+                    if box.get_text() is not None:
+                        save_player(box.get_text().strip(), str(score))
                     pygame.mixer.music.stop()
                     pygame.mixer.music.load("assets/sound/Androids.wav")
                     main_menu()
@@ -455,7 +457,8 @@ def scoreBoardLoop():
         message_to_screen('SCORE', green, y_offset=-300, x_offset=50)
         drawBtns((audioBtn, goBackBtn))
         handleAudio()
-        for player in c.execute('select upper(name) name, score from players order by score desc'):
+        # Bring back the top 10 scores
+        for player in c.execute('select upper(name) name, score from players order by score desc limit 10'):
             message_to_screen(str(player["name"]), game_colour, y_offset=offsetY, x_offset=-50)
             message_to_screen(str(player["score"]), game_colour, y_offset=offsetY, x_offset=50)
             offsetY+=20

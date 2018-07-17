@@ -4,7 +4,7 @@ pygame.init()
 COLOR_INACTIVE = pygame.Color('lightskyblue3')
 COLOR_ACTIVE = pygame.Color('dodgerblue2')
 
-defaultFont = pygame.font.SysFont(None, 25)
+defaultFont = pygame.font.Font("assets/fonts/GeosansLight.ttf", 20)
 
 class InputBox:
 

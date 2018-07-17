@@ -5,7 +5,7 @@ class Button:
 
     blue_green = ((0,255,170))
 
-    defaultFont = pygame.font.SysFont(None, 25)
+    defaultFont = pygame.font.Font("assets/fonts/GeosansLight.ttf", 20)
 
     def __init__(self,
                  x,
