@@ -2,7 +2,7 @@
 *.log
 
 # ignore all DB files
-*.db
+DB
 
 build
 

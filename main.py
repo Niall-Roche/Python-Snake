@@ -5,14 +5,14 @@ import sqlite3
 from InputBox import InputBox
 from Block import Block
 from Button import Button
+from DBObject import DBO as dbo
 
 pygame.init()
 
 snake_icon = pygame.image.load("assets/images/snake_icon.png")
 pygame.display.set_icon(snake_icon);
 
-conn = sqlite3.connect("DB/gameDB.db")
-conn.row_factory = sqlite3.Row
+conn = dbo("DB/gameDB.db").connection
 
 display_width = 800
 display_height = 600
@@ -27,6 +27,7 @@ gameOver = False
 paused = False
 startMenu = True
 scoreMenu = False
+settingsMenu = False
 
 white = (255,255,255)
 black = (64, 70, 79)
@@ -38,7 +39,6 @@ game_green_light = (131, 242, 118)
 game_blue = (27, 106, 232)
 game_blue_light = (96, 181, 242)
 
-# defaultFont = pygame.font.SysFont(None, 25)
 defaultFont = pygame.font.Font("assets/fonts/GeosansLight.ttf", 20)
 yahooFont = pygame.font.Font("assets/fonts/Yahoo.ttf", 25)
 exedore = pygame.font.Font("assets/fonts/exedore.ttf", 25)
@@ -50,6 +50,7 @@ AudioNoImg = pygame.image.load("assets/images/audio-no.png")
 AudioYesImg = pygame.image.load("assets/images/audio-yes.png")
 
 audio_active = True
+pygame.mixer.music.load("assets/sound/Androids.wav")
 
 clock = pygame.time.Clock()
 
@@ -70,7 +71,7 @@ def message_text(msg, colour, font):
 
 def message_to_screen(msg,colour,font=defaultFont, x_offset=0, y_offset=0):
     screen_text, text_rect = message_text(msg, colour, font)
-    text_rect.center = (display_width/2) + x_offset, (display_width/2) + y_offset
+    text_rect.center = (display_width/2) + x_offset, (display_height/2) + y_offset
     gameDisplay.blit(screen_text, text_rect)
 
 def rotateHead(img, direction):
@@ -93,7 +94,7 @@ def snake(snakeList, maxLength, direction):
 def topSection():
     score = 'S C O R E : '
     gameDisplay.fill(game_colour, rect=[0,0,display_width,top_section_height])
-    message_to_screen(score, white, exedore, y_offset=-370)
+    message_to_screen(score, white, exedore, y_offset=-270)
 
 def updateScore(currentScore):
     if int(currentScore) > 9 and int(currentScore) < 100:
@@ -102,7 +103,7 @@ def updateScore(currentScore):
         scoreOffset = 140
     else:
         scoreOffset = 110
-    message_to_screen(currentScore, white, exedore, scoreOffset, y_offset=-370)
+    message_to_screen(currentScore, white, exedore, scoreOffset, y_offset=-270)
 
 def save_player(name, score):
     c = conn.cursor()
@@ -125,7 +126,9 @@ def handleBtnEvents(btns, event):
         btn.handle_event(event)
 
 def handleGameOptions(event):
-    if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+    if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+        quit_event()
+    elif event.type == pygame.KEYDOWN and event.key == pygame.K_a:
         toggle_audio()
 
 def handleAudio():
@@ -143,13 +146,17 @@ def toggle_audio():
     global audio_active
     audio_active = not audio_active
 
+def get_setting(name):
+    c = conn.cursor()
+    return c.execute('select max_len, apple_no from settings').fetchone()[name]
+
 audioBtn = Button(display_width-50,
                   top_section_height-50,
                   30,
                   30,
                   colour=black,
                   img=AudioYesImg,
-                  active_event=toggle_audio)
+                  onClick=toggle_audio)
 
 def gameLoop():
     global startMenu
@@ -159,15 +166,14 @@ def gameLoop():
     blockSize = 20
     lead_x = display_width/2
     movement = 20
-    # blockSize = movement
     lead_x_change = movement
     lead_y = display_height/2
     lead_y_change = 0
     fps = 15
     apples = []
-    maxApples = 3
+    maxApples = get_setting("apple_no")
     snakeList = []
-    maxLength = 5
+    maxLength = get_setting("max_len")
     score = 0
     direction = "right"
 
@@ -175,7 +181,6 @@ def gameLoop():
     gameOver = False
     paused = False
 
-    pygame.mixer.music.load("assets/sound/Androids.wav")
     while not gameExit:
 
         if startMenu:
@@ -187,15 +192,16 @@ def gameLoop():
         if paused:
             pauseLoop()
 
+        if settingsMenu:
+            settingsLoop()
+
         if gameOver:
             gameOverLoop(score)
 
         for event in pygame.event.get():
             handleGameOptions(event)
             handleBtnEvents((audioBtn,), event)
-            if event.type == pygame.QUIT:
-                gameExit = True
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                 if lead_y_change != movement:
                     lead_y_change = -movement
                     lead_x_change = 0
@@ -288,7 +294,7 @@ def pauseLoop():
                          colour=game_colour,
                          active_colour=game_colour_light,
                          font=exedore,
-                         active_event=continue_game)
+                         onClick=continue_game)
 
     mainMenuBtn = Button(continueBtn.get_width() + continueBtn.get_xPos() + 50,
                          display_height -50,
@@ -296,7 +302,7 @@ def pauseLoop():
                          colour=game_green,
                          active_colour=game_green_light,
                          font=exedore,
-                         active_event=main_menu)
+                         onClick=main_menu)
 
     quitBtn = Button(mainMenuBtn.get_width() + mainMenuBtn.get_xPos() + 50,
                      display_height -50,
@@ -304,14 +310,14 @@ def pauseLoop():
                      colour=game_blue,
                      active_colour=game_blue_light,
                      font=exedore,
-                     active_event=quit_event)
+                     onClick=quit_event)
 
     btns = ((audioBtn, continueBtn, mainMenuBtn, quitBtn))
 
     while paused:
         gameDisplay.fill(white)
-        message_to_screen("PAUSED", game_colour, exedorel, y_offset=-150)
-        message_to_screen("Press P to continue", game_colour, y_offset=-100)
+        message_to_screen("PAUSED", game_colour, exedorel, y_offset=-50)
+        message_to_screen("Press P to continue", game_colour)
         drawBtns(btns)
         handleAudio()
         pygame.display.update()
@@ -320,9 +326,7 @@ def pauseLoop():
             handleGameOptions(event)
             handleBtnEvents(btns, event)
 
-            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                quit_event()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 continue_game()
 
 
@@ -335,6 +339,8 @@ def gameOverLoop(score):
 
     def main_menu():
         global startMenu
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load("assets/sound/Androids.wav")
         startMenu = True
         gameLoop()
 
@@ -346,7 +352,7 @@ def gameOverLoop(score):
                           colour=game_colour,
                           active_colour=game_colour_light,
                           font=exedore,
-                          active_event=play_again)
+                          onClick=play_again)
 
     mainMenuBtn = Button(playAgainBtn.get_width() + playAgainBtn.get_xPos() + 50,
                          display_height -50,
@@ -354,7 +360,7 @@ def gameOverLoop(score):
                          colour=game_green,
                          active_colour=game_green_light,
                          font=exedore,
-                         active_event=main_menu)
+                         onClick=main_menu)
 
     quitBtn = Button(mainMenuBtn.get_width() + mainMenuBtn.get_xPos() + 50,
                      display_height -50,
@@ -362,15 +368,15 @@ def gameOverLoop(score):
                      colour=game_blue,
                      active_colour=game_blue_light,
                      font=exedore,
-                     active_event=quit_event)
+                     onClick=quit_event)
 
     btns = ((audioBtn, playAgainBtn, mainMenuBtn, quitBtn))
 
     while gameOver:
         gameDisplay.fill(black)
-        message_to_screen("GAME OVER", game_colour, exedorel, y_offset=-150)
-        message_to_screen(f"Your score was: {score}", game_colour, y_offset=-100)
-        message_to_screen("Enter your name", game_colour, x_offset=-95, y_offset=-50)
+        message_to_screen("GAME OVER", game_colour, exedorel, y_offset=-50)
+        message_to_screen(f"Your score was: {score}", game_colour)
+        message_to_screen("Enter your name", game_colour, x_offset=-95, y_offset=50)
         drawBtns(btns)
         box.update()
         box.draw(gameDisplay)
@@ -381,9 +387,7 @@ def gameOverLoop(score):
             box.handle_event(event)
             if not box.get_active():
                 handleGameOptions(event)
-                if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                    quit_event()
-                elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                     play_again()
             else:
                 if event.type == pygame.QUIT:
@@ -396,6 +400,94 @@ def gameOverLoop(score):
                     main_menu()
             handleBtnEvents(btns, event)
 
+def settingsLoop():
+
+    def back_to_start():
+        global settingsMenu
+        global startMenu
+        startMenu = True
+        settingsMenu = False
+        gameLoop() # Ensures settings are enabled for the game
+
+    def update_setting( args ):
+        num = args[1](args[0]) + args[2]
+        if num >= 1 and num <= 10:
+            c = conn.cursor()
+            sql = f"""update settings
+                      set {args[0]} = {num}"""
+            c.execute(sql)
+            conn.commit()
+
+    snakeLenUpBtn = Button(display_width/2 + 50,
+                           display_height/2 - 12,
+                           25,
+                           25,
+                           colour=game_colour,
+                           active_colour=game_green,
+                           symbol="TRIANGLE_UP",
+                           onClick=update_setting,
+                           onClickParams=('max_len', get_setting, 1))
+
+    snakeLenDownBtn = Button(snakeLenUpBtn.get_xPos() + snakeLenUpBtn.get_width() + 10,
+                             display_height/2 - 12,
+                             25,
+                             25,
+                             colour=game_colour,
+                             active_colour=game_green,
+                             symbol="TRIANGLE_DOWN",
+                             onClick=update_setting,
+                             onClickParams=('max_len', get_setting, -1))
+
+    appleUpBtn = Button(display_width/2 + 50,
+                        display_height/2 + 50,
+                        25,
+                        25,
+                        colour=game_colour,
+                        active_colour=game_green,
+                        symbol="TRIANGLE_UP",
+                        onClick=update_setting,
+                        onClickParams=('apple_no', get_setting, 1))
+
+    appleDownBtn = Button(appleUpBtn.get_xPos() + appleUpBtn.get_width() + 10,
+                          display_height/2 + 50,
+                          25,
+                          25,
+                          colour=game_colour,
+                          active_colour=game_green,
+                          symbol="TRIANGLE_DOWN",
+                          onClick=update_setting,
+                          onClickParams=('apple_no', get_setting, -1))
+
+    goBackBtn = Button(display_width/2,
+                       display_height - 50,
+                       text="GO BACK",
+                       colour=game_colour,
+                       active_colour=game_green,
+                       center_to_self=True,
+                       font=exedore,
+                       onClick=back_to_start)
+
+    btns = ((audioBtn,
+             snakeLenUpBtn,
+             snakeLenDownBtn,
+             appleUpBtn,
+             appleDownBtn,
+             goBackBtn))
+
+    while settingsMenu:
+        gameDisplay.fill(white)
+        message_to_screen("SETTINGS", game_colour, exedorel, y_offset=-50)
+        message_to_screen("Starting length:", game_colour, x_offset=-70)
+        message_to_screen(f"{get_setting('max_len')}", game_colour, x_offset=20)
+        message_to_screen("Number of Apples:", game_colour, x_offset=-70, y_offset=60)
+        message_to_screen(f"{get_setting('apple_no')}", game_colour, y_offset=60, x_offset=20)
+        drawBtns(btns)
+        handleAudio()
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            handleGameOptions(event)
+            handleBtnEvents(btns, event)
 
 def startLoop():
 
@@ -409,22 +501,60 @@ def startLoop():
         startMenu = False
         scoreMenu = True
 
-    playBtn = Button(display_width/2, display_height/2, text="PLAY", colour=game_colour, active_colour=game_colour_light, center_to_self=True, font=exedore, active_event=play_from_start)
-    scoreBtn = Button(display_width/2, display_height/2 + 75, text="SCORE BOARD", colour=game_colour, active_colour=game_colour_light, center_to_self=True, font=exedore, active_event=score_from_start)
-    quitBtn = Button(display_width/2, display_height/2 + 150, text="QUIT", colour=game_colour, active_colour=game_colour_light, center_to_self=True, font=exedore, active_event=quit_event)
+    def settings_from_start():
+        global startMenu
+        global settingsMenu
+        startMenu = False
+        settingsMenu = True
 
-    btns = ((audioBtn, playBtn, scoreBtn, quitBtn))
+    btns_offset = 50
+
+    playBtn = Button(display_width/2,
+                     display_height/2 - btns_offset,
+                     text="PLAY",
+                     colour=game_colour,
+                     active_colour=game_green,
+                     center_to_self=True,
+                     font=exedore,
+                     onClick=play_from_start)
+
+    scoreBtn = Button(display_width/2,
+                      playBtn.get_yPos() + playBtn.get_height() + btns_offset,
+                      text="SCORE BOARD",
+                      colour=game_colour,
+                      active_colour=game_green,
+                      center_to_self=True,
+                      font=exedore,
+                      onClick=score_from_start)
+
+    settingsBtn = Button(display_width/2,
+                         scoreBtn.get_yPos() + scoreBtn.get_height() + btns_offset,
+                         text="SETTINGS",
+                         colour=game_colour,
+                         active_colour=game_green,
+                         center_to_self=True,
+                         font=exedore,
+                         onClick=settings_from_start)
+
+    quitBtn = Button(display_width/2,
+                     settingsBtn.get_yPos() + settingsBtn.get_height() + btns_offset,
+                     text="QUIT",
+                     colour=game_colour,
+                     active_colour=game_green,
+                     center_to_self=True,
+                     font=exedore,
+                     onClick=quit_event)
+
+    btns = ((audioBtn, playBtn, scoreBtn, settingsBtn, quitBtn))
 
     while startMenu:
         gameDisplay.fill(black)
-        message_to_screen(game_title, game_colour, exedorel, y_offset=-200)
+        message_to_screen(game_title, game_colour, exedorel, y_offset=-150)
         drawBtns(btns)
         for event in pygame.event.get():
             handleBtnEvents(btns, event)
             handleGameOptions(event)
-            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_q:
-                quit_event()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_c:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_c:
                 play_from_start()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
                 score_from_start()
@@ -445,16 +575,16 @@ def scoreBoardLoop():
                        display_height - 50,
                        text="GO BACK",
                        colour=game_colour,
-                       active_colour=game_colour_light,
+                       active_colour=game_green,
                        center_to_self=True,
                        font=exedore,
-                       active_event=back_to_start)
+                       onClick=back_to_start)
 
     while scoreMenu:
-        offsetY = -280
+        offsetY = -180
         gameDisplay.fill(black)
-        message_to_screen('PLAYER', green, y_offset=-300, x_offset=-50)
-        message_to_screen('SCORE', green, y_offset=-300, x_offset=50)
+        message_to_screen('PLAYER', green, y_offset=-200, x_offset=-50)
+        message_to_screen('SCORE', green, y_offset=-200, x_offset=50)
         drawBtns((audioBtn, goBackBtn))
         handleAudio()
         # Bring back the top 10 scores
@@ -467,7 +597,7 @@ def scoreBoardLoop():
         for event in pygame.event.get():
             handleGameOptions(event)
             handleBtnEvents((goBackBtn,), event)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_LEFT:
                 back_to_start()
             elif event.type == pygame.QUIT:
                 quit_event()
