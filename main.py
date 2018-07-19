@@ -31,6 +31,7 @@ settingsMenu = False
 
 white = (255,255,255)
 black = (64, 70, 79)
+light_grey= (189, 191, 193)
 green = (0,155,0)
 game_colour = (214, 44, 44)
 game_colour_light = (234, 96, 96)
@@ -375,6 +376,7 @@ def gameOverLoop(score):
     while gameOver:
         gameDisplay.fill(black)
         message_to_screen("GAME OVER", game_colour, exedorel, y_offset=-50)
+        pygame.draw.rect(gameDisplay, light_grey, (display_width/4,display_height/2 - 15,400,100))
         message_to_screen(f"Your score was: {score}", game_colour)
         message_to_screen("Enter your name", game_colour, x_offset=-95, y_offset=50)
         drawBtns(btns)
@@ -475,7 +477,8 @@ def settingsLoop():
              goBackBtn))
 
     while settingsMenu:
-        gameDisplay.fill(white)
+        gameDisplay.fill(black)
+        pygame.draw.rect(gameDisplay, light_grey, (display_width/4,display_height/2-100,400,150))
         message_to_screen("SETTINGS", game_colour, exedorel, y_offset=-150)
         message_to_screen("Starting length:", game_colour, x_offset=-70, y_offset=-50)
         message_to_screen(f"{get_setting('max_len')}", game_colour, x_offset=20, y_offset=-50)
