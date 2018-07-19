@@ -419,7 +419,7 @@ def settingsLoop():
             conn.commit()
 
     snakeLenUpBtn = Button(display_width/2 + 50,
-                           display_height/2 - 12,
+                           display_height/2 - 62,
                            25,
                            25,
                            colour=game_colour,
@@ -429,7 +429,7 @@ def settingsLoop():
                            onClickParams=('max_len', get_setting, 1))
 
     snakeLenDownBtn = Button(snakeLenUpBtn.get_xPos() + snakeLenUpBtn.get_width() + 10,
-                             display_height/2 - 12,
+                             display_height/2 - 62,
                              25,
                              25,
                              colour=game_colour,
@@ -439,7 +439,7 @@ def settingsLoop():
                              onClickParams=('max_len', get_setting, -1))
 
     appleUpBtn = Button(display_width/2 + 50,
-                        display_height/2 + 50,
+                        display_height/2 - 12,
                         25,
                         25,
                         colour=game_colour,
@@ -449,7 +449,7 @@ def settingsLoop():
                         onClickParams=('apple_no', get_setting, 1))
 
     appleDownBtn = Button(appleUpBtn.get_xPos() + appleUpBtn.get_width() + 10,
-                          display_height/2 + 50,
+                          display_height/2 - 12,
                           25,
                           25,
                           colour=game_colour,
@@ -476,11 +476,11 @@ def settingsLoop():
 
     while settingsMenu:
         gameDisplay.fill(white)
-        message_to_screen("SETTINGS", game_colour, exedorel, y_offset=-50)
-        message_to_screen("Starting length:", game_colour, x_offset=-70)
-        message_to_screen(f"{get_setting('max_len')}", game_colour, x_offset=20)
-        message_to_screen("Number of Apples:", game_colour, x_offset=-70, y_offset=60)
-        message_to_screen(f"{get_setting('apple_no')}", game_colour, y_offset=60, x_offset=20)
+        message_to_screen("SETTINGS", game_colour, exedorel, y_offset=-150)
+        message_to_screen("Starting length:", game_colour, x_offset=-70, y_offset=-50)
+        message_to_screen(f"{get_setting('max_len')}", game_colour, x_offset=20, y_offset=-50)
+        message_to_screen("Number of Apples:", game_colour, x_offset=-70)
+        message_to_screen(f"{get_setting('apple_no')}", game_colour, x_offset=20)
         drawBtns(btns)
         handleAudio()
         pygame.display.update()
@@ -581,10 +581,11 @@ def scoreBoardLoop():
                        onClick=back_to_start)
 
     while scoreMenu:
-        offsetY = -180
+        offsetY = -130
         gameDisplay.fill(black)
-        message_to_screen('PLAYER', green, y_offset=-200, x_offset=-50)
-        message_to_screen('SCORE', green, y_offset=-200, x_offset=50)
+        message_to_screen("SCORE BOARD", game_colour, exedorel, y_offset=-200)
+        message_to_screen('PLAYER', green, y_offset=-150, x_offset=-50)
+        message_to_screen('SCORE', green, y_offset=-150, x_offset=50)
         drawBtns((audioBtn, goBackBtn))
         handleAudio()
         # Bring back the top 10 scores
