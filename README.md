@@ -44,6 +44,7 @@ env/bin/python main.py
 <h3>Features</h3>
 <ul>
   <li>Score Counter</li>
+  <li>Settings Menu</li>
   <li>Score Board</li>
   <li>Game music. User can toggle on/off</li>
 </ul>
