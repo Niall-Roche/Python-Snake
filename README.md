@@ -37,7 +37,7 @@ env/bin/python main.py
 
 <h3>Screenshots</h3>
 <img src="https://image.ibb.co/khRQzJ/image.png" alt="image" border="3" width="700" height="500">
-<img src="https://image.ibb.co/gkzvUJ/game_in_play.png" alt="game_in_play" border="3" width="700" height="500">
+<img src="https://image.ibb.co/gShnDd/image.png" alt="image" border="3" width="700" height="500">
 <img src="https://image.ibb.co/hH1dmy/image.png" alt="image" border="3" width="700" height="500">
 <img src="https://image.ibb.co/ij3Ktd/image.png" alt="image" border="3" width="700" height="500">
 
