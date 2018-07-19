@@ -174,6 +174,7 @@ def gameLoop():
     apples = []
     maxApples = get_setting("apple_no")
     snakeList = []
+    snakeColour = game_green
     maxLength = get_setting("max_len")
     score = 0
     direction = "right"
@@ -242,8 +243,9 @@ def gameLoop():
         if len(apples) < maxApples and randApple % 17 == 0:
             apples.append(createBlock(randAppleX, randAppleY, game_colour, blockSize, appleImg))
 
-        snakeHead = createBlock(lead_x,lead_y,green,blockSize)
+        snakeHead = createBlock(lead_x,lead_y,snakeColour,blockSize)
         snakeList.append(snakeHead)
+        snakeColour = game_green_light if snakeColour is game_green else game_green
 
         gameDisplay.fill(white)
         topSection()
