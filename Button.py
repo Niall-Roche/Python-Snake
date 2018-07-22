@@ -74,8 +74,23 @@ class Button:
 
     def draw(self, screen):
         if self.img:
-            screen.blit(self.img, (self.rect.x, self.rect.y))
-        elif self.symbol == "TRIANGLE_UP":
+            self.__draw_img_btn(screen)
+        elif self.symbol:
+            self.__draw_symbol_btn(screen)
+        else:
+            self.__draw_txt_btn(screen)
+
+    def __draw_txt_btn(self, screen):
+        # Blit the text.
+        screen.blit(self.__txt_surface, (self.rect.x + 5, self.rect.y + 5))
+        # Blit the rect.
+        pygame.draw.rect(screen, self.__current_colour, self.rect, 2)
+
+    def __draw_img_btn(self, screen):
+        screen.blit(self.img, (self.rect.x, self.rect.y))
+
+    def __draw_symbol_btn(self, screen):
+        if self.symbol == "TRIANGLE_UP":
             triangle_points = ((self.rect.x + self.rect.w/2, self.rect.y + 5),
                                (self.rect.x + 5, self.rect.y + self.rect.h - 5),
                                (self.rect.x + self.rect.w - 5, self.rect.y + self.rect.h - 5))
@@ -86,11 +101,6 @@ class Button:
                                (self.rect.x + 5, self.rect.y + 5),
                                (self.rect.x + self.rect.w - 5, self.rect.y + 5))
             pygame.draw.polygon(screen, self.__current_colour, triangle_points)
-            pygame.draw.rect(screen, self.__current_colour, self.rect, 2)
-        else:
-            # Blit the text.
-            screen.blit(self.__txt_surface, (self.rect.x + 5, self.rect.y + 5))
-            # Blit the rect.
             pygame.draw.rect(screen, self.__current_colour, self.rect, 2)
 
     def update_img(self, img):

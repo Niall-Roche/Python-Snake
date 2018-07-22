@@ -30,11 +30,11 @@ scoreMenu = False
 settingsMenu = False
 
 white = (255,255,255)
-black = (64, 70, 79)
-light_grey= (189, 191, 193)
+game_grey = (64, 70, 79)
+game_grey_light= (189, 191, 193)
 green = (0,155,0)
-game_colour = (214, 44, 44)
-game_colour_light = (234, 96, 96)
+game_red = (214, 44, 44)
+game_red_light = (234, 96, 96)
 game_green = (51, 206, 4)
 game_green_light = (131, 242, 118)
 game_blue = (27, 106, 232)
@@ -96,7 +96,7 @@ def snake(snakeList, maxLength, direction):
 
 def topSection():
     score = 'S C O R E : '
-    gameDisplay.fill(game_colour, rect=[0,0,display_width,top_section_height])
+    gameDisplay.fill(game_red, rect=[0,0,display_width,top_section_height])
     message_to_screen(score, white, exedore, y_offset=-270)
 
 def updateScore(currentScore):
@@ -157,7 +157,7 @@ audioBtn = Button(display_width-50,
                   top_section_height-50,
                   30,
                   30,
-                  colour=black,
+                  colour=game_grey,
                   img=AudioYesImg,
                   onClick=toggle_audio)
 
@@ -241,7 +241,7 @@ def gameLoop():
         randAppleY = random.randrange(top_section_height, display_height-blockSize)
         randApple = random.randrange(1, 1000)
         if len(apples) < maxApples and randApple % 17 == 0:
-            apples.append(createBlock(randAppleX, randAppleY, game_colour, blockSize, appleImg))
+            apples.append(createBlock(randAppleX, randAppleY, game_red, blockSize, appleImg))
 
         snakeHead = createBlock(lead_x,lead_y,snakeColour,blockSize)
         snakeList.append(snakeHead)
@@ -294,8 +294,8 @@ def pauseLoop():
     continueBtn = Button(125,
                          display_height -50,
                          text="CONTINUE",
-                         colour=game_colour,
-                         active_colour=game_colour_light,
+                         colour=game_red,
+                         active_colour=game_red_light,
                          font=exedore,
                          onClick=continue_game)
 
@@ -319,8 +319,8 @@ def pauseLoop():
 
     while paused:
         gameDisplay.fill(white)
-        message_to_screen("PAUSED", game_colour, exedorel, y_offset=-50)
-        message_to_screen("Press P to continue", game_colour)
+        message_to_screen("PAUSED", game_red, exedorel, y_offset=-50)
+        message_to_screen("Press P to continue", game_red)
         drawBtns(btns)
         handleAudio()
         pygame.display.update()
@@ -352,8 +352,8 @@ def gameOverLoop(score):
     playAgainBtn = Button(100,
                           display_height -50,
                           text="PLAY AGAIN",
-                          colour=game_colour,
-                          active_colour=game_colour_light,
+                          colour=game_red,
+                          active_colour=game_red_light,
                           font=exedore,
                           onClick=play_again)
 
@@ -376,11 +376,11 @@ def gameOverLoop(score):
     btns = ((audioBtn, playAgainBtn, mainMenuBtn, quitBtn))
 
     while gameOver:
-        gameDisplay.fill(black)
-        message_to_screen("GAME OVER", game_colour, exedorel, y_offset=-50)
-        pygame.draw.rect(gameDisplay, light_grey, (display_width/4,display_height/2 - 15,400,100))
-        message_to_screen(f"Your score was: {score}", game_colour)
-        message_to_screen("Enter your name", game_colour, x_offset=-95, y_offset=50)
+        gameDisplay.fill(game_grey)
+        message_to_screen("GAME OVER", game_red, exedorel, y_offset=-50)
+        pygame.draw.rect(gameDisplay, game_grey_light, (display_width/4,display_height/2 - 15,400,100))
+        message_to_screen(f"Your score was: {score}", game_red)
+        message_to_screen("Enter your name", game_red, x_offset=-95, y_offset=50)
         drawBtns(btns)
         box.update()
         box.draw(gameDisplay)
@@ -414,6 +414,7 @@ def settingsLoop():
         gameLoop() # Ensures settings are enabled for the game
 
     def update_setting( args ):
+        # e.g. num = get_setting('max_len') + 1
         num = args[1](args[0]) + args[2]
         if num >= 1 and num <= 10:
             c = conn.cursor()
@@ -426,7 +427,7 @@ def settingsLoop():
                            display_height/2 - 62,
                            25,
                            25,
-                           colour=game_colour,
+                           colour=game_red,
                            active_colour=game_green,
                            symbol="TRIANGLE_UP",
                            onClick=update_setting,
@@ -436,7 +437,7 @@ def settingsLoop():
                              display_height/2 - 62,
                              25,
                              25,
-                             colour=game_colour,
+                             colour=game_red,
                              active_colour=game_green,
                              symbol="TRIANGLE_DOWN",
                              onClick=update_setting,
@@ -446,7 +447,7 @@ def settingsLoop():
                         display_height/2 - 12,
                         25,
                         25,
-                        colour=game_colour,
+                        colour=game_red,
                         active_colour=game_green,
                         symbol="TRIANGLE_UP",
                         onClick=update_setting,
@@ -456,7 +457,7 @@ def settingsLoop():
                           display_height/2 - 12,
                           25,
                           25,
-                          colour=game_colour,
+                          colour=game_red,
                           active_colour=game_green,
                           symbol="TRIANGLE_DOWN",
                           onClick=update_setting,
@@ -465,7 +466,7 @@ def settingsLoop():
     goBackBtn = Button(display_width/2,
                        display_height - 50,
                        text="GO BACK",
-                       colour=game_colour,
+                       colour=game_red,
                        active_colour=game_green,
                        center_to_self=True,
                        font=exedore,
@@ -479,13 +480,13 @@ def settingsLoop():
              goBackBtn))
 
     while settingsMenu:
-        gameDisplay.fill(black)
-        pygame.draw.rect(gameDisplay, light_grey, (display_width/4,display_height/2-100,400,150))
-        message_to_screen("SETTINGS", game_colour, exedorel, y_offset=-150)
-        message_to_screen("Starting length:", game_colour, x_offset=-70, y_offset=-50)
-        message_to_screen(f"{get_setting('max_len')}", game_colour, x_offset=20, y_offset=-50)
-        message_to_screen("Number of Apples:", game_colour, x_offset=-70)
-        message_to_screen(f"{get_setting('apple_no')}", game_colour, x_offset=20)
+        gameDisplay.fill(game_grey)
+        pygame.draw.rect(gameDisplay, game_grey_light, (display_width/4,display_height/2-100,400,150))
+        message_to_screen("SETTINGS", game_red, exedorel, y_offset=-150)
+        message_to_screen("Starting length:", game_red, x_offset=-70, y_offset=-50)
+        message_to_screen(f"{get_setting('max_len')}", game_red, x_offset=20, y_offset=-50)
+        message_to_screen("Number of Apples:", game_red, x_offset=-70)
+        message_to_screen(f"{get_setting('apple_no')}", game_red, x_offset=20)
         drawBtns(btns)
         handleAudio()
         pygame.display.update()
@@ -517,7 +518,7 @@ def startLoop():
     playBtn = Button(display_width/2,
                      display_height/2 - btns_offset,
                      text="PLAY",
-                     colour=game_colour,
+                     colour=game_red,
                      active_colour=game_green,
                      center_to_self=True,
                      font=exedore,
@@ -526,7 +527,7 @@ def startLoop():
     scoreBtn = Button(display_width/2,
                       playBtn.get_yPos() + playBtn.get_height() + btns_offset,
                       text="SCORE BOARD",
-                      colour=game_colour,
+                      colour=game_red,
                       active_colour=game_green,
                       center_to_self=True,
                       font=exedore,
@@ -535,7 +536,7 @@ def startLoop():
     settingsBtn = Button(display_width/2,
                          scoreBtn.get_yPos() + scoreBtn.get_height() + btns_offset,
                          text="SETTINGS",
-                         colour=game_colour,
+                         colour=game_red,
                          active_colour=game_green,
                          center_to_self=True,
                          font=exedore,
@@ -544,7 +545,7 @@ def startLoop():
     quitBtn = Button(display_width/2,
                      settingsBtn.get_yPos() + settingsBtn.get_height() + btns_offset,
                      text="QUIT",
-                     colour=game_colour,
+                     colour=game_red,
                      active_colour=game_green,
                      center_to_self=True,
                      font=exedore,
@@ -553,8 +554,8 @@ def startLoop():
     btns = ((audioBtn, playBtn, scoreBtn, settingsBtn, quitBtn))
 
     while startMenu:
-        gameDisplay.fill(black)
-        message_to_screen(game_title, game_colour, exedorel, y_offset=-150)
+        gameDisplay.fill(game_grey)
+        message_to_screen(game_title, game_red, exedorel, y_offset=-150)
         drawBtns(btns)
         for event in pygame.event.get():
             handleBtnEvents(btns, event)
@@ -579,7 +580,7 @@ def scoreBoardLoop():
     goBackBtn = Button(display_width/2,
                        display_height - 50,
                        text="GO BACK",
-                       colour=game_colour,
+                       colour=game_red,
                        active_colour=game_green,
                        center_to_self=True,
                        font=exedore,
@@ -587,17 +588,17 @@ def scoreBoardLoop():
 
     while scoreMenu:
         offsetY = -120
-        gameDisplay.fill(black)
-        pygame.draw.rect(gameDisplay, light_grey, (display_width/4,display_height/2-180,400,400))
-        message_to_screen("SCORE BOARD", game_colour, exedorel, y_offset=-220)
+        gameDisplay.fill(game_grey)
+        pygame.draw.rect(gameDisplay, game_grey_light, (display_width/4,display_height/2-180,400,400))
+        message_to_screen("SCORE BOARD", game_red, exedorel, y_offset=-220)
         message_to_screen('PLAYER', green, y_offset=-150, x_offset=-50, underline=True)
         message_to_screen('SCORE', green, y_offset=-150, x_offset=50, underline=True)
         drawBtns((audioBtn, goBackBtn))
         handleAudio()
         # Bring back the top 10 scores
         for player in c.execute('select upper(name) name, score from players order by score desc limit 10'):
-            message_to_screen(str(player["name"]), game_colour, y_offset=offsetY, x_offset=-50)
-            message_to_screen(str(player["score"]), game_colour, y_offset=offsetY, x_offset=50)
+            message_to_screen(str(player["name"]), game_red, y_offset=offsetY, x_offset=-50)
+            message_to_screen(str(player["score"]), game_red, y_offset=offsetY, x_offset=50)
             offsetY+=30
         pygame.display.update()
 
