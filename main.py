@@ -70,10 +70,12 @@ def message_text(msg, colour, font):
     text = font.render(msg, True, colour)
     return text, text.get_rect()
 
-def message_to_screen(msg,colour,font=defaultFont, x_offset=0, y_offset=0):
+def message_to_screen(msg,colour,font=defaultFont, x_offset=0, y_offset=0, underline=False):
     screen_text, text_rect = message_text(msg, colour, font)
     text_rect.center = (display_width/2) + x_offset, (display_height/2) + y_offset
     gameDisplay.blit(screen_text, text_rect)
+    if underline:
+        pygame.draw.line(gameDisplay, colour, (text_rect.x, text_rect.y + text_rect.h), (text_rect.x + text_rect.w, text_rect.y + text_rect.h), 2)
 
 def rotateHead(img, direction):
     return {
@@ -235,8 +237,6 @@ def gameLoop():
         if lead_x < 0 or (lead_x + (blockSize-movement)) >= display_width or lead_y < top_section_height or (lead_y + (blockSize-movement)) >= display_height:
             gameOver = True
 
-        # randAppleX = round(random.randrange(1, display_width-blockSize)/blockSize)*blockSize
-        # randAppleY = round(random.randrange(top_section_height, display_height-blockSize)/blockSize)*blockSize
         randAppleX = random.randrange(1, display_width-blockSize)
         randAppleY = random.randrange(top_section_height, display_height-blockSize)
         randApple = random.randrange(1, 1000)
@@ -586,18 +586,19 @@ def scoreBoardLoop():
                        onClick=back_to_start)
 
     while scoreMenu:
-        offsetY = -130
+        offsetY = -120
         gameDisplay.fill(black)
-        message_to_screen("SCORE BOARD", game_colour, exedorel, y_offset=-200)
-        message_to_screen('PLAYER', green, y_offset=-150, x_offset=-50)
-        message_to_screen('SCORE', green, y_offset=-150, x_offset=50)
+        pygame.draw.rect(gameDisplay, light_grey, (display_width/4,display_height/2-180,400,400))
+        message_to_screen("SCORE BOARD", game_colour, exedorel, y_offset=-220)
+        message_to_screen('PLAYER', green, y_offset=-150, x_offset=-50, underline=True)
+        message_to_screen('SCORE', green, y_offset=-150, x_offset=50, underline=True)
         drawBtns((audioBtn, goBackBtn))
         handleAudio()
         # Bring back the top 10 scores
         for player in c.execute('select upper(name) name, score from players order by score desc limit 10'):
             message_to_screen(str(player["name"]), game_colour, y_offset=offsetY, x_offset=-50)
             message_to_screen(str(player["score"]), game_colour, y_offset=offsetY, x_offset=50)
-            offsetY+=20
+            offsetY+=30
         pygame.display.update()
 
         for event in pygame.event.get():
